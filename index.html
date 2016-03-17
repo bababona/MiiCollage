@@ -21,16 +21,10 @@
 	<legend>Settings</legend>
 	<label for="canvasHeight">Height</label><input id="canvasHeight" type="number" min="100" max="10000" step="100" value="600" />
 	<label for="canvasWidth">Width</label><input id="canvasWidth" type="number" min="100" max="10000" step="100" value="800" />
-
 	<label for="numCols">Columns</label><input id="numCols" type="number" min="3" max="100" value="6" />
 	<label for="numRows">Rows</label><input id="numRows" type="number" min="3" max="100" value="5" />
-	
 	<label for="backgroundColor">Background</label><input id="backgroundColor" type="color" value="#f6ffff" />
-	
 	<label for="imageHeight">Mii Height</label><input id="imageHeight" type="number" min="20" max="1000" step="10" value="80" />
-
-	<label for="isStaggered">Stagger?</label><input id="isStaggered" type="checkbox" checked />
-
 	<button type="button" onclick="generateCollage()">Generate!</button>
 </fieldset>
 <canvas id="collage" width="800" height="600"></canvas>
@@ -55,11 +49,6 @@ function generateCollage() {
 	var numCols=parseInt(document.getElementById('numCols').value);
 	var imageHeight=parseInt(document.getElementById('imageHeight').value);
 	var backgroundColor=document.getElementById('backgroundColor').value;
-	
-	console.log("imageHeight = ",imageHeight);
-	
-	var isStaggered=document.getElementById('isStaggered').checked;
-	console.log("isStaggered = ",isStaggered);
 
 	var canvas = document.getElementById('collage');
 	var context = document.getElementById('collage').getContext('2d');
@@ -74,10 +63,6 @@ function generateCollage() {
 	var yStart = yStep*0.5 - (imageHeight/2);
 	var x = xStart;
 	var y = yStart;
-	
-	console.log("xStep = ",xStep);
-	console.log("yStep = ",yStep);
-	console.log("xStart = ",xStart);
 	
 	var xMax = canvasWidth - (xStep/2 + imageHeight/2);
 	
