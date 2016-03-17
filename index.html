@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+
+<body>
+<style>
+	canvas#collage { 
+		margin:20px;
+		box-shadow: 2px 3px 15px #999;
+		display:block;
+		background:#f6ffff;
+	}
+	#settingsForm {
+		display:inline-block;
+	}
+</style>
+
+<h1>Mii Collage Generator</h1>
+<fieldset id="settingsForm">
+	<legend>Settings</legend>
+	<label for="canvasHeight">Height</label><input id="canvasHeight" type="number" min="100" max="10000" step="100" value="600" />
+	<label for="canvasWidth">Width</label><input id="canvasWidth" type="number" min="100" max="10000" step="100" value="800" />
+
+	<label for="numCols">Columns</label><input id="numCols" type="number" min="3" max="100" value="6" />
+	<label for="numRows">Rows</label><input id="numRows" type="number" min="3" max="100" value="5" />
+	
+	<label for="backgroundColor">Background</label><input id="backgroundColor" type="color" value="#f6ffff" />
+	
+	<label for="imageHeight">Mii Height</label><input id="imageHeight" type="number" min="20" max="1000" step="10" value="80" />
+
+	<label for="isStaggered">Stagger?</label><input id="isStaggered" type="checkbox" checked />
+
+	<button type="button" onclick="generateCollage()">Generate!</button>
+</fieldset>
+<canvas id="collage" width="800" height="600"></canvas>
+
+</body>
+<script>
+
+	/*-----------------------
+	Fill out these variables
+	-------------------------*/
+	var numberOfImages = 30;
+	var folderName = "Miis"; // change to empty string, i.e., "", if images are in the same folder as the html file
+	var imageNamePrefix = "mii";
+	var imageNameSuffix = ".png";
+	
+	// paths to images would be: Miis/mii000.png, Miis/mii001.png, etc.
+
+function generateCollage() {
+	var canvasHeight=parseInt(document.getElementById('canvasHeight').value);
+	var canvasWidth=parseInt(document.getElementById('canvasWidth').value);
+	var numRows=parseInt(document.getElementById('numRows').value);
+	var numCols=parseInt(document.getElementById('numCols').value);
+	var imageHeight=parseInt(document.getElementById('imageHeight').value);
+	var backgroundColor=document.getElementById('backgroundColor').value;
+	
+	console.log("imageHeight = ",imageHeight);
+	
+	var isStaggered=document.getElementById('isStaggered').checked;
+	console.log("isStaggered = ",isStaggered);
+
+	var canvas = document.getElementById('collage');
+	var context = document.getElementById('collage').getContext('2d');
+	
+	canvas.width = canvasWidth;
+	canvas.height = canvasHeight;
+	canvas.style.background = backgroundColor;
+
+	var xStep = canvasWidth / (.5 + numCols);
+	var yStep = canvasHeight / (.5 + numRows);
+	var xStart = xStep*0.5 - (imageHeight/4);
+	var yStart = yStep*0.5 - (imageHeight/2);
+	var x = xStart;
+	var y = yStart;
+	
+	console.log("xStep = ",xStep);
+	console.log("yStep = ",yStep);
+	console.log("xStart = ",xStart);
+	
+	var xMax = canvasWidth - (xStep/2 + imageHeight/2);
+	
+	
+	var prefix = folderName == "" ? imageNamePrefix : folderName + "/" + imageNamePrefix;
+	var suffix = imageNameSuffix;
+	
+	var imageList = [];
+	for(var i = 0;i<numberOfImages;i++) imageList[i]=getNameNumber(i);
+	shuffle(imageList);
+	
+	var images = [];
+	var rowCount = 1;
+	for(var i = 0;i<numberOfImages; i++) {
+		var imageSrc = prefix + imageList[i] + suffix;
+		images[i] = new Image();
+		images[i].src = imageSrc;
+		images[i].xpos = x;
+		images[i].ypos = y;
+		images[i].onload = function() {
+			context.drawImage(this, this.xpos, this.ypos, imageHeight, imageHeight * this.height / this.width);
+	    };
+		x += xStep;
+		
+		//stagger x positions
+		if (x > xMax) {
+			rowCount++;
+			y += yStep;
+			if (rowCount % 2 === 0) {
+				x=xStart+(xStep/2);
+			}
+			else {
+				x = xStart;
+			}
+		}
+		if (rowCount > numRows) break;
+	}
+}
+
+function getImageSrc(image,folder,pref,suf) {
+	var num = i.toString();
+	if (num<10) {
+		return "00"+num;
+	}
+	else if (num<100) {
+		return "0"+num;
+	}
+	else {
+		return num;
+	}
+}
+
+function getNameNumber(i) {
+	var num = i.toString();
+	if (num<10) {
+		return "00"+num;
+	}
+	else if (num<100) {
+		return "0"+num;
+	}
+	else {
+		return num;
+	}
+}
+
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length; i; i -= 1) {
+        j = Math.floor(Math.random() * i);
+        x = a[i - 1];
+        a[i - 1] = a[j];
+        a[j] = x;
+    }
+}
+
+</script>
+</html>
